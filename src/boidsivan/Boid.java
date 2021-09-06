@@ -1,8 +1,10 @@
 
 package boidsivan;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 import java.util.Random;
@@ -29,17 +31,17 @@ public class Boid implements Runnable {
     public static float MAX_SPEED;
     
     // constructor
-    public Boid(BoidFlock flock) // tells
+    public Boid(BoidFlock flock) 
     {
         
-        this.flock = new BoidFlock(); 
+        this.flock = new BoidFlock();  // Correct?
         
         Random rand = new Random();
         
-        x =(WORLD_WIDTH / 2); // RANDOMIZE SPAWN POS (I.E X,Y)
+        x =(WORLD_WIDTH / 2); 
         y =(WORLD_HEIGHT / 2);
-        setMovementX(rand.nextDouble());
-        setMovementY(rand.nextDouble());
+        setMovementX(rand.nextDouble() + 1);// +1 so boid cant be stationary
+        setMovementY(rand.nextDouble() + 1);
         this.BOID_SIZE = 15;
         
         this.colour = new Color[3];
@@ -137,12 +139,14 @@ public class Boid implements Runnable {
         double speed = sqrt(pow(getMovementX(),2) + (pow(getMovementY(),2)));
         double velX = ((BOID_SIZE*getMovementX())/(2*speed));
         double velY = ((BOID_SIZE*getMovementY())/(2*speed));
-        g.setColor(colour[0]);
-        g.drawLine((int)getPositionX(), (int)getPositionY(), (int)(getPositionX()-2*velX), (int)(getPositionY() - 2*velY)); // draws long centre line
-        g.setColor(colour[1]);
-        g.drawLine((int)getPositionX(), (int)getPositionY(), (int)((getPositionX()-velX+velY)), (int)((getPositionY() - velX - velY))); // draws left arrowhead
-        g.setColor(colour[2]);
-        g.drawLine((int)getPositionX(), (int)getPositionY(), (int)((getPositionX()-velX-velY)), (int)((getPositionY() + velX - velY))); // draws right arrowhead
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setStroke(new BasicStroke(3));
+        g2d.setColor(colour[0]);
+        g2d.drawLine((int)getPositionX(), (int)getPositionY(), (int)(getPositionX()-2*velX), (int)(getPositionY() - 2*velY)); // draws long centre line
+        g2d.setColor(colour[1]);
+        g2d.drawLine((int)getPositionX(), (int)getPositionY(), (int)((getPositionX()-velX+velY)), (int)((getPositionY() - velX - velY))); // draws left arrowhead
+        g2d.setColor(colour[2]);
+        g2d.drawLine((int)getPositionX(), (int)getPositionY(), (int)((getPositionX()-velX-velY)), (int)((getPositionY() + velX - velY))); // draws right arrowhead
     }
     
     

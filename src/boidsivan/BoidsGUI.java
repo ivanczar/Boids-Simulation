@@ -87,7 +87,7 @@ public class BoidsGUI extends JPanel implements ActionListener { // create frame
             System.out.println("Add a Boid");
             Boid boid = new Boid(flock);
             Thread thread = new Thread(boid);
-            thread.start(); // tells thread class to run() the ball class (ball is runable i.e implements runnable)
+            thread.start(); // tells thread class to run() the boid class (boid is runable i.e implements runnable)
             flock.addBoid(boid);
         }
         if (source == removeBoid && flock.size() !=0)
@@ -137,6 +137,8 @@ public static void main(String[] args){
       frame.setLocation((screenDimension.width-frameDimension.width)/2, 
     (screenDimension.height-frameDimension.height)/2);
       frame.setVisible(true); 
+      
+      
 
     }
 }
