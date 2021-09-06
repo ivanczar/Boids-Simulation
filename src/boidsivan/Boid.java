@@ -62,7 +62,7 @@ public class Boid implements Runnable {
     
     public void requestStop()
     {
-        //??? is_alive = false???
+        isAlive = false;
     }
     
     // thread run
