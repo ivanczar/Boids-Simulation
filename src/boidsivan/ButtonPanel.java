@@ -10,9 +10,11 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.util.Hashtable;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 
@@ -43,6 +45,14 @@ public class ButtonPanel extends JPanel {
         sepWeight = new JSlider(0, 20, 0);
         alignWeight = new JSlider(0, 20, 0);
         cohesionWeight = new JSlider(0, 20, 0);
+        Hashtable labelTable = new Hashtable();
+    labelTable.put( 0, new JLabel("0.0") );
+    labelTable.put( 1, new JLabel("0.1") );
+    labelTable.put(2, new JLabel("0.2") );
+    labelTable.put(10, new JLabel("1.0") );
+    cohesionWeight.setLabelTable(labelTable);
+        
+        
         radDetect = new JSlider(0, 500, 0);
         sepWeight.setBorder(BorderFactory.createTitledBorder("Separation Weight"));
         alignWeight.setBorder(BorderFactory.createTitledBorder("Alignment Weight"));

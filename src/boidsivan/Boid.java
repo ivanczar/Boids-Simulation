@@ -24,11 +24,13 @@ public class Boid implements Runnable {
     // static means variable changes are applied to all instances of boid object
     public static int WORLD_WIDTH, WORLD_HEIGHT;
     public static int BOID_SIZE;
-    public static int RADIUS_DETECTION = 10; // DO WE INITIALIZE THESE VARIABLES??
+
+    public static float MAX_SPEED = 5;
+
+    public static int RADIUS_DETECTION = 10; // boids wont be drawn if this isnt intiiated????
     public static float COHESION_WEIGHT;
     public static float SEPARATION_WEIGHT;
     public static float ALIGNMENT_WEIGHT;
-    public static float MAX_SPEED;
 
     // constructor
     public Boid(BoidFlock flock) {
@@ -54,27 +56,71 @@ public class Boid implements Runnable {
 
     }
 
-    public Vect alignment() // Most likely wrong
-    {
+    public Vect alignment() {
         Vect vA; // behaviour vectr
-        Vect vAvg; // average centre of mass (CoM) vector
-        double vAvgX = 0; // average centre of mass vector x component
-        double vAvgY = 0; // average centre of mass vector y component
+        Vect vAvg; // average movement vector
+        double vAvgX = 0; // average movement vector x component
+        double vAvgY = 0; // average movement vector y component
 
         List<Boid> neighbours = flock.getNeighbours(this); // get boids neighbours
 
         for (Boid neighbour : neighbours) // iterate through neighbours
         {
-            vAvgX += neighbour.getMovementX(); // add all x components of CoM
-            vAvgY += neighbour.getMovementY(); // add all y components of CoM
+            vAvgX += neighbour.getMovementX(); // add all x components of movement
+            vAvgY += neighbour.getMovementY(); // add all y components of movement
         }
-        // set CoM vector using x and y components
+        // set movement vector using x and y components
         vAvg = new Vect(vAvgX / neighbours.size(), vAvgY / neighbours.size());
 
         vA = Vect.sub(vAvg, this.mov); // get behaviour vector as per pdf formula
-        System.out.println(vA); // for testing
+        //  System.out.println(vA); // for testing
         vA.mult(Boid.ALIGNMENT_WEIGHT);
         return vA;
+    }
+
+    public Vect cohesion() {
+        Vect vC; // behaviour vectr
+        Vect pCentre; // average centre of mass (CoM) vector
+        double pCentreX = 0; // average centre of mass vector x component
+        double pCentreY = 0; // average centre of mass vector y component
+
+        List<Boid> neighbours = flock.getNeighbours(this); // get boids neighbours
+
+        for (Boid neighbour : neighbours) // iterate through neighbours
+        {
+            pCentreX += neighbour.getPositionX(); // add all x components of CoM
+            pCentreY += neighbour.getPositionY(); // add all y components of CoM
+        }
+        // set CoM vector using x and y components
+        pCentre = new Vect(pCentreX / neighbours.size(), pCentreY / neighbours.size());
+
+        vC = Vect.sub(pCentre, this.pos); // get behaviour vector as per pdf formula
+        //  System.out.println(vA); // for testing
+        vC.mult(Boid.COHESION_WEIGHT *0.1); // HOW ELSE DO I GET FLOAT VALUES IF SLIDER IS INT????????
+        return vC;
+    }
+
+    public void updateMov() {
+        Vect vA = alignment();
+        Vect vC = cohesion();
+
+        if(vA.mag() > Boid.MAX_SPEED)
+        {
+            vA.normalize(); // convert to unit vector
+            vA.mult(MAX_SPEED); // scale
+        }
+        else if(vC.mag() > Boid.MAX_SPEED)
+        {
+            vC.normalize();
+            vA.mult(MAX_SPEED);
+        }
+        //  SCALE SEPARATION VECTOR!!!!!!!!!!
+        
+        
+        
+        //// update movement with behaviour vector
+        this.mov.setX(this.mov.getX() + vA.getX() + vC.getX()); //xcomponent of vectors
+        this.mov.setY(this.mov.getY() + vA.getY() + vC.getY()); //ycomponent of vectors
     }
 
     public void requestStop() {
@@ -87,11 +133,12 @@ public class Boid implements Runnable {
         isAlive = true;
         while (isAlive) {
 
-            this.mov.setX(this.mov.getX() + +this.alignment().getX());
-            this.mov.setY(this.mov.getY() + +this.alignment().getY());
-
+            // change position of boid
             this.pos.setX(this.pos.getX() + this.mov.getX());
-            this.pos.setY(this.pos.getY() + this.mov.getY() + this.alignment().getY());
+            this.pos.setY(this.pos.getY() + this.mov.getY());
+
+
+            updateMov();
 
             if (this.pos.getX() >= WORLD_WIDTH - BOID_SIZE || this.pos.getX() <= 0) {
 

@@ -37,7 +37,7 @@ public class BoidFlock {
 
     }
 
-    public List<Boid> getNeighbours(Boid boid) {
+    public synchronized List<Boid> getNeighbours(Boid boid) {
 
         List<Boid> withinRadius = new ArrayList();
 

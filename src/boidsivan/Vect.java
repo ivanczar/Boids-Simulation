@@ -47,6 +47,14 @@ public class Vect {
         y *= val;
     }
 
+    void normalize() {
+        double mag = mag();
+        if (mag != 0) {
+            x /= mag;
+            y /= mag;
+        }
+    }
+
     double mag() {
         return sqrt(pow(x, 2) + pow(y, 2));
     }
