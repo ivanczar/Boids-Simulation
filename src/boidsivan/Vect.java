@@ -38,19 +38,8 @@ public class Vect {
         this.y = y;
     }
 
-    void add(Vect v) {
-        x += v.x;
-        y += v.y;
-    }
-
-    void sub(Vect v) {
-        x -= v.x;
-        y -= v.y;
-    }
-
-    void div(double val) {
-        x /= val;
-        y /= val;
+    static Vect sub(Vect v, Vect v2) {
+        return new Vect(v.x - v2.x, v.y - v2.y);
     }
 
     void mult(double val) {
@@ -60,5 +49,9 @@ public class Vect {
 
     double mag() {
         return sqrt(pow(x, 2) + pow(y, 2));
+    }
+
+    public String toString() {
+        return "Vector: X:" + x + " Y: " + y;
     }
 }

@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -19,7 +20,7 @@ public class Boid implements Runnable {
     private boolean isAlive;
     private Color[] colour;
     private BoidFlock flock;
-    
+
     // static means variable changes are applied to all instances of boid object
     public static int WORLD_WIDTH, WORLD_HEIGHT;
     public static int BOID_SIZE;
@@ -28,55 +29,72 @@ public class Boid implements Runnable {
     public static float SEPARATION_WEIGHT;
     public static float ALIGNMENT_WEIGHT;
     public static float MAX_SPEED;
-    
+
     // constructor
-    public Boid(BoidFlock flock) 
-    {
-        
-        this.flock = new BoidFlock();  // Correct?
-        
+    public Boid(BoidFlock flock) {
+
+        this.flock = flock;  // Correct?
+
         Random rand = new Random();
-        
-        
-        pos = new Vect((WORLD_WIDTH / 2),(WORLD_HEIGHT / 2));
+
+        pos = new Vect((WORLD_WIDTH / 2), (WORLD_HEIGHT / 2));
         mov = new Vect(-rand.nextDouble() + 1, -rand.nextDouble() + 1);
 
         this.BOID_SIZE = 15;
-        
+
         this.colour = new Color[3];
-        for (int i =0; i < 3; i++)
-        {
+        for (int i = 0; i < 3; i++) {
             int rValue = rand.nextInt(255 - 2);
             int gValue = rand.nextInt(255 - 2);
             int bValue = rand.nextInt(255 - 2);
-         
 
             this.colour[i] = new Color(rValue, gValue, bValue);
 
-            
         }
 
-       
     }
-    
-    public void requestStop()
+
+    public Vect alignment() // Most likely wrong
     {
+        Vect vA; // behaviour vectr
+        Vect vAvg; // average centre of mass (CoM) vector
+        double vAvgX = 0; // average centre of mass vector x component
+        double vAvgY = 0; // average centre of mass vector y component
+
+        List<Boid> neighbours = flock.getNeighbours(this); // get boids neighbours
+
+        for (Boid neighbour : neighbours) // iterate through neighbours
+        {
+            vAvgX += neighbour.getMovementX(); // add all x components of CoM
+            vAvgY += neighbour.getMovementY(); // add all y components of CoM
+        }
+        // set CoM vector using x and y components
+        vAvg = new Vect(vAvgX / neighbours.size(), vAvgY / neighbours.size());
+
+        vA = Vect.sub(vAvg, this.mov); // get behaviour vector as per pdf formula
+        System.out.println(vA); // for testing
+        vA.mult(Boid.ALIGNMENT_WEIGHT);
+        return vA;
+    }
+
+    public void requestStop() {
         isAlive = false;
     }
-    
+
     // thread run
-    public void run()
-    {
-        
+    public void run() {
+
         isAlive = true;
         while (isAlive) {
 
+            this.mov.setX(this.mov.getX() + +this.alignment().getX());
+            this.mov.setY(this.mov.getY() + +this.alignment().getY());
+
             this.pos.setX(this.pos.getX() + this.mov.getX());
-            this.pos.setY(this.pos.getY() + this.mov.getY());
+            this.pos.setY(this.pos.getY() + this.mov.getY() + this.alignment().getY());
 
             if (this.pos.getX() >= WORLD_WIDTH - BOID_SIZE || this.pos.getX() <= 0) {
-                
-                
+
                 this.mov.setX(-this.mov.getX());
             }
             if (this.pos.getY() >= WORLD_HEIGHT - BOID_SIZE || this.pos.getY() <= 0) {
@@ -87,72 +105,63 @@ public class Boid implements Runnable {
                 Thread.sleep(20);
             } catch (InterruptedException e) {
             }
+
         }
     }
-    
+
     //getters
-    public double getPositionX(){
-        
+    public double getPositionX() {
+
         return this.pos.getX();
     }
-    
-    public double getPositionY(){
-        
+
+    public double getPositionY() {
+
         return this.pos.getY();
     }
-        
-    public double getMovementX(){
-        
+
+    public double getMovementX() {
+
         return this.mov.getX();
-        
+
     }
-    
-    public double getMovementY(){
-        
+
+    public double getMovementY() {
+
         return this.mov.getY();
-        
+
     }
-    
+
     // setters
-    public void setPostionX(double x)
-    {
+    public void setPostionX(double x) {
         this.pos.setX(x);
     }
-    
-    public void setPostionY(double y)
-    {
+
+    public void setPostionY(double y) {
         this.pos.setY(y);
     }
-    
-    public void setMovementX(double dx)
-    {
+
+    public void setMovementX(double dx) {
         this.mov.setX(dx);
     }
-    
-    public void setMovementY(double dy)
-    {
+
+    public void setMovementY(double dy) {
         this.mov.setY(dy);
     }
-    
+
     // draw method
-    public void draw(Graphics g)
-    {
-        double speed = sqrt(pow(getMovementX(),2) + (pow(getMovementY(),2)));
-        double velX = ((BOID_SIZE*getMovementX())/(2*speed));
-        double velY = ((BOID_SIZE*getMovementY())/(2*speed));
+    public void draw(Graphics g) {
+        double speed = sqrt(pow(getMovementX(), 2) + (pow(getMovementY(), 2)));
+        double velX = ((BOID_SIZE * getMovementX()) / (2 * speed));
+        double velY = ((BOID_SIZE * getMovementY()) / (2 * speed));
         Graphics2D g2d = (Graphics2D) g;
         g2d.setStroke(new BasicStroke(3));
         g2d.setColor(colour[0]);
-        g2d.drawLine((int)getPositionX(), (int)getPositionY(), (int)(getPositionX()-2*velX), (int)(getPositionY() - 2*velY)); // draws long centre line
+        g2d.drawLine((int) getPositionX(), (int) getPositionY(), (int) (getPositionX() - 2 * velX), (int) (getPositionY() - 2 * velY)); // draws long centre line
         g2d.setColor(colour[1]);
-        g2d.drawLine((int)getPositionX(), (int)getPositionY(), (int)((getPositionX()-velX+velY)), (int)((getPositionY() - velX - velY))); // draws left arrowhead
+        g2d.drawLine((int) getPositionX(), (int) getPositionY(), (int) ((getPositionX() - velX + velY)), (int) ((getPositionY() - velX - velY))); // draws left arrowhead
         g2d.setColor(colour[2]);
-        g2d.drawLine((int)getPositionX(), (int)getPositionY(), (int)((getPositionX()-velX-velY)), (int)((getPositionY() + velX - velY))); // draws right arrowhead
+        g2d.drawLine((int) getPositionX(), (int) getPositionY(), (int) ((getPositionX() - velX - velY)), (int) ((getPositionY() + velX - velY))); // draws right arrowhead
     }
-    
-    
-    
-    
-    
-    
+
 }

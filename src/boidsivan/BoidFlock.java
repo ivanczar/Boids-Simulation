@@ -41,13 +41,17 @@ public class BoidFlock {
 
         List<Boid> withinRadius = new ArrayList();
 
-        for (Boid b : boids) {
-            if (sqrt((pow(boid.getPositionX() - b.getPositionX(), 2) + (pow(boid.getPositionY() - b.getPositionY(), 2)))) <= Boid.RADIUS_DETECTION) //if distance between 2 boids < radius detection
+        
+        
+        for (Boid b : this.boids) {
+            int distance = (int)(Math.sqrt((Math.pow(boid.getPositionX() - b.getPositionX(), 2) + (pow(boid.getPositionY() - b.getPositionY(), 2)))));
+            if ( distance < Boid.RADIUS_DETECTION) //if distance between 2 boids < radius detection
             {
                 withinRadius.add(b); // add those boids to temp list
             }
+            
         }
-
+        
         return withinRadius; // returns list of Boids within detection of function argument Boid
 
     }
