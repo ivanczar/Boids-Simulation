@@ -55,6 +55,11 @@ public class Vect {
         }
     }
 
+    void div(double val) {
+        x /= val;
+        y /= val;
+    }
+
     double mag() {
         return sqrt(pow(x, 2) + pow(y, 2));
     }

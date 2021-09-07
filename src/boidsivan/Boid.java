@@ -21,13 +21,12 @@ public class Boid implements Runnable {
     private Color[] colour;
     private BoidFlock flock;
 
-    // static means variable changes are applied to all instances of boid object
     public static int WORLD_WIDTH, WORLD_HEIGHT;
     public static int BOID_SIZE;
 
     public static float MAX_SPEED = 5;
 
-    public static int RADIUS_DETECTION = 10; // boids wont be drawn if this isnt intiiated????
+    public static int RADIUS_DETECTION = 10; // boids wont be drawn if this isnt intiiated????????????????
     public static float COHESION_WEIGHT;
     public static float SEPARATION_WEIGHT;
     public static float ALIGNMENT_WEIGHT;
@@ -56,14 +55,13 @@ public class Boid implements Runnable {
 
     }
 
-    public Vect alignment() {
+    public Vect alignment(List<Boid> neighbours) {
         Vect vA; // behaviour vectr
         Vect vAvg; // average movement vector
         double vAvgX = 0; // average movement vector x component
         double vAvgY = 0; // average movement vector y component
 
-        List<Boid> neighbours = flock.getNeighbours(this); // get boids neighbours
-
+        //  List<Boid> neighbours = flock.getNeighbours(this); // get boids neighbours
         for (Boid neighbour : neighbours) // iterate through neighbours
         {
             vAvgX += neighbour.getMovementX(); // add all x components of movement
@@ -78,14 +76,13 @@ public class Boid implements Runnable {
         return vA;
     }
 
-    public Vect cohesion() {
+    public Vect cohesion(List<Boid> neighbours) {
         Vect vC; // behaviour vectr
         Vect pCentre; // average centre of mass (CoM) vector
         double pCentreX = 0; // average centre of mass vector x component
         double pCentreY = 0; // average centre of mass vector y component
 
-        List<Boid> neighbours = flock.getNeighbours(this); // get boids neighbours
-
+        // List<Boid> neighbours = flock.getNeighbours(this); // get boids neighbours
         for (Boid neighbour : neighbours) // iterate through neighbours
         {
             pCentreX += neighbour.getPositionX(); // add all x components of CoM
@@ -96,31 +93,61 @@ public class Boid implements Runnable {
 
         vC = Vect.sub(pCentre, this.pos); // get behaviour vector as per pdf formula
         //  System.out.println(vA); // for testing
-        vC.mult(Boid.COHESION_WEIGHT *0.1); // HOW ELSE DO I GET FLOAT VALUES IF SLIDER IS INT????????
+        vC.mult(Boid.COHESION_WEIGHT * 0.1); // HOW ELSE DO I GET FLOAT VALUES IF SLIDER IS INT?????????????????????????????????
         return vC;
     }
 
-    public void updateMov() {
-        Vect vA = alignment();
-        Vect vC = cohesion();
+    public Vect separation(List<Boid> neighbours) {
+        Vect vS;
+        double vSX = 0;
+        double vSY = 0;
 
-        if(vA.mag() > Boid.MAX_SPEED)
-        {
+        for (Boid neighbour : neighbours) {
+
+            double diffX = this.getPositionX() - neighbour.getPositionX();
+
+            double diffY = this.getPositionY() - neighbour.getPositionY();
+            Vect diff = new Vect(diffX, diffY);
+
+            double mag = diff.mag();
+            if (mag != 0) {
+                diff.div(mag); //NaN error here
+            }
+
+            vSX += diff.getX();
+            vSY += diff.getY();
+
+        }
+        vS = new Vect(vSX, vSY);
+        vS.mult(Boid.SEPARATION_WEIGHT);
+        return vS;
+    }
+
+    public synchronized void updateMov() {
+        List<Boid> neighbours = flock.getNeighbours(this); // get boids neighbours
+
+        Vect vA = alignment(neighbours);
+        Vect vC = cohesion(neighbours);
+        Vect vS = separation(neighbours);
+
+        // System.out.println(vS); // for testing
+        if (vA.mag() > Boid.MAX_SPEED) { //scale alignment
             vA.normalize(); // convert to unit vector
             vA.mult(MAX_SPEED); // scale
         }
-        else if(vC.mag() > Boid.MAX_SPEED)
-        {
+        if (vC.mag() > Boid.MAX_SPEED) { //scale cohesion
             vC.normalize();
-            vA.mult(MAX_SPEED);
+            vC.mult(MAX_SPEED);
         }
-        //  SCALE SEPARATION VECTOR!!!!!!!!!!
-        
-        
-        
+        if (vS.mag() > Boid.MAX_SPEED) //scale separation
+        {
+            vS.normalize();
+            vS.mult(MAX_SPEED);
+        }
+
         //// update movement with behaviour vector
-        this.mov.setX(this.mov.getX() + vA.getX() + vC.getX()); //xcomponent of vectors
-        this.mov.setY(this.mov.getY() + vA.getY() + vC.getY()); //ycomponent of vectors
+        this.mov.setX(this.mov.getX() + vA.getX() + vC.getX() + vS.getX()); //xcomponent of vectors  
+        this.mov.setY(this.mov.getY() + vA.getY() + vC.getY() + vS.getY()); //ycomponent of vectors  
     }
 
     public void requestStop() {
@@ -128,7 +155,7 @@ public class Boid implements Runnable {
     }
 
     // thread run
-    public void run() {
+    public synchronized void run() {
 
         isAlive = true;
         while (isAlive) {
@@ -136,7 +163,6 @@ public class Boid implements Runnable {
             // change position of boid
             this.pos.setX(this.pos.getX() + this.mov.getX());
             this.pos.setY(this.pos.getY() + this.mov.getY());
-
 
             updateMov();
 
