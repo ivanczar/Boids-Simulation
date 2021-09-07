@@ -43,7 +43,7 @@ public class ButtonPanel extends JPanel {
         sepWeight = new JSlider(0, 20, 0);
         alignWeight = new JSlider(0, 20, 0);
         cohesionWeight = new JSlider(0, 20, 0);
-        radDetect = new JSlider(0, 20, 0);
+        radDetect = new JSlider(0, 500, 0);
         sepWeight.setBorder(BorderFactory.createTitledBorder("Separation Weight"));
         alignWeight.setBorder(BorderFactory.createTitledBorder("Alignment Weight"));
         cohesionWeight.setBorder(BorderFactory.createTitledBorder("Cohesion Weight"));

@@ -1,4 +1,3 @@
-
 package boidsivan;
 
 import java.awt.BasicStroke;
@@ -15,8 +14,8 @@ import java.util.Random;
  */
 public class Boid implements Runnable {
 
-    private double x ,y;
-    private double dx, dy;
+    private Vect pos;
+    private Vect mov;
     private boolean isAlive;
     private Color[] colour;
     private BoidFlock flock;
@@ -38,10 +37,10 @@ public class Boid implements Runnable {
         
         Random rand = new Random();
         
-        x =(WORLD_WIDTH / 2); 
-        y =(WORLD_HEIGHT / 2);
-        setMovementX(rand.nextDouble() + 1);// +1 so boid cant be stationary
-        setMovementY(rand.nextDouble() + 1);
+        
+        pos = new Vect((WORLD_WIDTH / 2),(WORLD_HEIGHT / 2));
+        mov = new Vect(-rand.nextDouble() + 1, -rand.nextDouble() + 1);
+
         this.BOID_SIZE = 15;
         
         this.colour = new Color[3];
@@ -71,15 +70,17 @@ public class Boid implements Runnable {
         
         isAlive = true;
         while (isAlive) {
-            x += dx; // GENERATE RANDOM NOISE????
-            y += dy;
 
-            if (x >= WORLD_WIDTH - BOID_SIZE || x <= 0) {
+            this.pos.setX(this.pos.getX() + this.mov.getX());
+            this.pos.setY(this.pos.getY() + this.mov.getY());
+
+            if (this.pos.getX() >= WORLD_WIDTH - BOID_SIZE || this.pos.getX() <= 0) {
                 
-                dx = -dx;
+                
+                this.mov.setX(-this.mov.getX());
             }
-            if (y >= WORLD_HEIGHT - BOID_SIZE || y <= 0) {
-                dy = -dy;
+            if (this.pos.getY() >= WORLD_HEIGHT - BOID_SIZE || this.pos.getY() <= 0) {
+                this.mov.setY(-this.mov.getY());
             }
 
             try {
@@ -92,45 +93,45 @@ public class Boid implements Runnable {
     //getters
     public double getPositionX(){
         
-        return this.x;
+        return this.pos.getX();
     }
     
     public double getPositionY(){
         
-        return this.y;
+        return this.pos.getY();
     }
         
     public double getMovementX(){
         
-        return this.dx;
+        return this.mov.getX();
         
     }
     
     public double getMovementY(){
         
-        return this.dy;
+        return this.mov.getY();
         
     }
     
     // setters
     public void setPostionX(double x)
     {
-        this.x = x;
+        this.pos.setX(x);
     }
     
     public void setPostionY(double y)
     {
-        this.y = y;
+        this.pos.setY(y);
     }
     
     public void setMovementX(double dx)
     {
-        this.dx = dx;
+        this.mov.setX(dx);
     }
     
     public void setMovementY(double dy)
     {
-        this.dy=dy;
+        this.mov.setY(dy);
     }
     
     // draw method
