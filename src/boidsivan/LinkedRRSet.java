@@ -50,48 +50,63 @@ public class LinkedRRSet<E extends Comparable<E>> extends LinkedSet<E> {
 
     }
 
-    public LinkedRRSet<E> retain(E start, E end) {
-
+    public LinkedRRSet<E> retain(E start, E end) throws IllegalArgumentException {
         LinkedRRSet<E> notRetained = new LinkedRRSet<>();
+//        if (!(start.equals(null) || end.equals(null))) {
+//
+//            if (start.compareTo(end) > 0) { // makes sure start > end
+//                throw new IllegalArgumentException();
+//            }
+//
+//        } else if (!(this.contains(start) || this.contains(end))) {
+//            throw new IllegalArgumentException();
+//        }
+        if (this.contains(start) && this.contains(end) || start == null || end == null) {
 
-        Node<E> currentNode = this.firstNode; // create a node which starts at first element of set
+            Node<E> currentNode = this.firstNode; // create a node which starts at first element of set
 
-        notRetained.add(currentNode.element);
-        while (currentNode.next != null && !(currentNode.next.element.compareTo(start) == 0)) //move through set following links untill it finds "start" argument
-        {
-            currentNode = currentNode.next; // moves up a node
+            if (start != null) {
+                notRetained.add(currentNode.element);
+                while (currentNode.next != null && !(currentNode.next.element.compareTo(start) == 0)) //move through set following links untill it finds "start" argument
+                {
+                    currentNode = currentNode.next; // moves up a node
 
-            notRetained.add(currentNode.element); //while moving up nodes, add thea current node to the set to be returned
+                    notRetained.add(currentNode.element); //while moving up nodes, add thea current node to the set to be returned
 
+                }
+
+                firstNode = currentNode.next; // removes links from left of "start" node
+            }
+            if (end != null) {
+                while (currentNode.next != null && !(currentNode.next.element.compareTo(end) == 0)) //move through set following links untill it finds "start" argument
+                {
+                    currentNode = currentNode.next; // moves up a node
+
+                }
+
+                Node<E> tempNode = currentNode; // creates a temp node with reference to the current node to later nullify
+
+                while (currentNode.next != null) //move through set following links untill it finds "end" argument
+                {
+                    currentNode = currentNode.next; // moves up a node
+
+                    notRetained.add(currentNode.element);
+
+                }
+
+                tempNode.next = null; // removes links to right of "end" node
+            }
+
+        } else {
+            throw new IllegalArgumentException();
         }
-
-        firstNode = currentNode.next; // removes links from left of "start" node
-
-        while (currentNode.next != null && !(currentNode.next.element.compareTo(end) == 0)) //move through set following links untill it finds "start" argument
-        {
-            currentNode = currentNode.next; // moves up a node
-
-        }
-
-
-        Node<E> tempNode = currentNode; // creates a temp node with reference to the current node to later nullify
-        
-        while (currentNode.next != null) //move through set following links untill it finds "end" argument
-        {
-            currentNode = currentNode.next; // moves up a node
-
-            notRetained.add(currentNode.element);
-
-        }
-
-        tempNode.next = null; // removes links to right of "end" node
-
         return notRetained;
+
     }
 
     public static void main(String[] args) {
 
-        LinkedRRSet<Integer> mySet = new LinkedRRSet();
+        LinkedRRSet<Integer> mySet = new LinkedRRSet(); // WHY DOES THIS GET MODIFIED IF IT GETS COPIED DURING TEST?
 
         mySet.add(1);
         mySet.add(2);
@@ -101,15 +116,18 @@ public class LinkedRRSet<E extends Comparable<E>> extends LinkedSet<E> {
         mySet.add(6); // duplicate should not be added
         mySet.add(7);
 
-        
-        int start = 2;
-        int end = 6;
-        System.out.println("ORIGINAL: " +mySet);
+        retainTest(mySet, null, 4);
 
-        System.out.println("RETAIN(" + start + "," +end + ")");
-        System.out.println("RETURNED: " +mySet.retain(start, end));
+    }
 
-        System.out.println("REMAINING: " +mySet);
+    public static void retainTest(LinkedRRSet<Integer> mySet, Integer start, Integer end) {
+        LinkedRRSet<Integer> set = mySet;
+
+        System.out.println("SET: " + set);
+        System.out.println("RETAIN(" + start + "," + end + ")");
+        System.out.println("RETURNED SET: " + set.retain(start, end));
+        System.out.println("SET: " + set);
+        System.out.println("-------------------------------------------");
 
     }
 
