@@ -33,7 +33,9 @@ public class BoidFlock {
 
     public Boid removeBoid() {
 
-        return boids.remove(0);
+        Boid boid = boids.remove(0);
+        boid.requestStop();
+        return boid;
 
     }
 

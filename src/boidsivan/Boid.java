@@ -134,7 +134,7 @@ public class Boid implements Runnable {
         
         res.setX( vA.getX() + vC.getX() + vS.getX());
         res.setY( vA.getY() + vC.getY() + vS.getY());
-        System.out.println(vC);
+     //   System.out.println(vC);
         if (res.mag() > Boid.MAX_SPEED)
         {
             res.normalize();
@@ -241,6 +241,10 @@ public class Boid implements Runnable {
     // draw method
     public void draw(Graphics g) {
         double speed = sqrt(pow(getMovementX(), 2) + (pow(getMovementY(), 2)));
+//        if (speed ==0)
+//        {
+//            speed = 0.01;
+//        }
         double velX = ((BOID_SIZE * getMovementX()) / (2 * speed));
         double velY = ((BOID_SIZE * getMovementY()) / (2 * speed));
         Graphics2D g2d = (Graphics2D) g;
