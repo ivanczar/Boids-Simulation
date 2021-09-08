@@ -24,9 +24,9 @@ public class Boid implements Runnable {
     public static int WORLD_WIDTH, WORLD_HEIGHT;
     public static int BOID_SIZE;
 
-    public static float MAX_SPEED = 5;
+    public static float MAX_SPEED = 4;
 
-    public static int RADIUS_DETECTION = 10; // boids wont be drawn if this isnt intiiated????????????????
+    public static int RADIUS_DETECTION =10; // boids wont be drawn (or will draw a flashing line) if this isnt intiiated to 10????????????????
     public static float COHESION_WEIGHT;
     public static float SEPARATION_WEIGHT;
     public static float ALIGNMENT_WEIGHT;
@@ -126,28 +126,44 @@ public class Boid implements Runnable {
     public synchronized void updateMov() {
         List<Boid> neighbours = flock.getNeighbours(this); // get boids neighbours
 
+        // clamp sum of behaviour vectors
         Vect vA = alignment(neighbours);
         Vect vC = cohesion(neighbours);
         Vect vS = separation(neighbours);
-
-        // System.out.println(vS); // for testing
-        if (vA.mag() > Boid.MAX_SPEED) { //scale alignment
-            vA.normalize(); // convert to unit vector
-            vA.mult(MAX_SPEED); // scale
-        }
-        if (vC.mag() > Boid.MAX_SPEED) { //scale cohesion
-            vC.normalize();
-            vC.mult(MAX_SPEED);
-        }
-        if (vS.mag() > Boid.MAX_SPEED) //scale separation
+        Vect res = new Vect(0,0);
+        
+        res.setX( vA.getX() + vC.getX() + vS.getX());
+        res.setY( vA.getY() + vC.getY() + vS.getY());
+        System.out.println(vC);
+        if (res.mag() > Boid.MAX_SPEED)
         {
-            vS.normalize();
-            vS.mult(MAX_SPEED);
+            res.normalize();
+            res.mult(MAX_SPEED);
         }
-
-        //// update movement with behaviour vector
-        this.mov.setX(this.mov.getX() + vA.getX() + vC.getX() + vS.getX()); //xcomponent of vectors  
-        this.mov.setY(this.mov.getY() + vA.getY() + vC.getY() + vS.getY()); //ycomponent of vectors  
+        
+        this.mov.setX(this.mov.getX() +res.getX());
+        this.mov.setY(this.mov.getY()+res.getY());
+        
+        
+        
+        // clamps each individual behaviour vector
+//        if (vA.mag() > Boid.MAX_SPEED) { //scale alignment
+//            vA.normalize(); // convert to unit vector
+//            vA.mult(MAX_SPEED); // scale
+//        }
+//        if (vC.mag() > Boid.MAX_SPEED) { //scale cohesion
+//            vC.normalize();
+//            vC.mult(MAX_SPEED);
+//        }
+//        if (vS.mag() > Boid.MAX_SPEED) //scale separation
+//        {
+//            vS.normalize();
+//            vS.mult(MAX_SPEED);
+//        }
+//
+//        //// update movement with behaviour vector
+//        this.mov.setX(this.mov.getX() + vA.getX() + vC.getX() + vS.getX()); //xcomponent of vectors  
+//        this.mov.setY(this.mov.getY() + vA.getY() + vC.getY() + vS.getY()); //ycomponent of vectors  
     }
 
     public void requestStop() {
