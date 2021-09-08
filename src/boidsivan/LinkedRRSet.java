@@ -108,21 +108,33 @@ public class LinkedRRSet<E extends Comparable<E>> extends LinkedSet<E> {
         LinkedRRSet<E> elemRemoved = new LinkedRRSet<>();
 
         Node<E> currentNode = firstNode;
+        if (start != null) {
+            while (currentNode.next != null && !(currentNode.next.element.compareTo(start) == 0)) {
 
-        while (currentNode.next != null && !(currentNode.next.element.compareTo(start) == 0)) {
+                currentNode = currentNode.next;
 
-            currentNode = currentNode.next;
-
+            }
         }
         Node<E> tempNode1 = currentNode;
+        System.out.println("tempNode: " +tempNode1.element);
         while (currentNode.next != null && !(currentNode.next.element.compareTo(end) == 0)) {
 
             currentNode = currentNode.next; // moves up a node
 
             elemRemoved.add(currentNode.element);
         }
- 
+        
         tempNode1.next = currentNode.next; // link "gap"
+        if (start ==null)
+        {
+            elemRemoved.add(firstNode.element);
+            
+            
+            firstNode = firstNode.next;
+           
+            
+        }
+
         
 
         return elemRemoved;
@@ -146,7 +158,7 @@ public class LinkedRRSet<E extends Comparable<E>> extends LinkedSet<E> {
 //        retainTest(mySet, 4, null);
 //        retainTest(mySet, null, null);
 //        retainTest(mySet, 10, 2); // 10 not in set, throws exception
-        removeTest(mySet, 2, 5);
+        removeTest(mySet, null, 4);
     }
 
     public static void retainTest(LinkedRRSet<Integer> mySet, Integer start, Integer end) {
