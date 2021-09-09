@@ -61,6 +61,7 @@ public class LinkedRRSet<E extends Comparable<E>> extends LinkedSet<E> {
 //        } else if (!(this.contains(start) || this.contains(end))) {
 //            throw new IllegalArgumentException();
 //        }
+// NOTE: nodes traversed using seths look forward method, where it stops one node before target
         if (this.contains(start) && this.contains(end) || start == null || end == null) {
 
             Node<E> currentNode = this.firstNode; // create a node which starts at first element of set
@@ -98,7 +99,7 @@ public class LinkedRRSet<E extends Comparable<E>> extends LinkedSet<E> {
             }
 
         } else {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Start and/or end not contained in Set");
         }
         return notRetained;
 
@@ -106,37 +107,52 @@ public class LinkedRRSet<E extends Comparable<E>> extends LinkedSet<E> {
 
     public LinkedRRSet<E> remove(E start, E end) throws IllegalArgumentException {
         LinkedRRSet<E> elemRemoved = new LinkedRRSet<>();
+        
+        // NOTE: nodes traversed using seths look forward method, where it stops one node before target
+        if (this.contains(start) && this.contains(end) || start == null || end == null) { // checks thAt input is valid
+            Node<E> currentNode = firstNode; // create node which start at (references) first node
+            
+            if (start != null || end == null) { 
+                
+                while (currentNode.next != null && !(currentNode.next.element.compareTo(start) == 0)) {// moves current node to "start" node
 
-        Node<E> currentNode = firstNode;
-        if (start != null) {
-            while (currentNode.next != null && !(currentNode.next.element.compareTo(start) == 0)) {
+                    currentNode = currentNode.next;
 
-                currentNode = currentNode.next;
+                }
+            }
+            Node<E> tempNode1 = currentNode; // creates a copy of current node to come back to delete
+
+            if (end == null) { //adds all elements after start to return list and then nullifies nodes to right of start
+                while (currentNode.next != null) { 
+
+                    currentNode = currentNode.next; // moves up a node
+
+                    elemRemoved.add(currentNode.element);
+
+                }
+                tempNode1.next = null;
+            }
+
+            if (end != null) { // maybe wrong
+                while (currentNode.next != null && !(currentNode.next.element.compareTo(end) == 0)) { // moves upto "end" node adding elements to return list
+
+                    currentNode = currentNode.next; // moves up a node
+
+                    elemRemoved.add(currentNode.element);
+                }
+            }
+
+            tempNode1.next = currentNode.next; // link  "start" and "end" nodes (nullifying nodes inbetween)
+            
+            if (start == null) {
+                elemRemoved.add(firstNode.element);
+
+                firstNode = firstNode.next;
 
             }
+        } else {
+            throw new IllegalArgumentException("Start and/or end not contained in Set");
         }
-        Node<E> tempNode1 = currentNode;
-        System.out.println("tempNode: " +tempNode1.element);
-        while (currentNode.next != null && !(currentNode.next.element.compareTo(end) == 0)) {
-
-            currentNode = currentNode.next; // moves up a node
-
-            elemRemoved.add(currentNode.element);
-        }
-        
-        tempNode1.next = currentNode.next; // link "gap"
-        if (start ==null)
-        {
-            elemRemoved.add(firstNode.element);
-            
-            
-            firstNode = firstNode.next;
-           
-            
-        }
-
-        
-
         return elemRemoved;
     }
 
@@ -152,13 +168,19 @@ public class LinkedRRSet<E extends Comparable<E>> extends LinkedSet<E> {
         mySet.add(6);
         mySet.add(7);
 
-//        retainTest(mySet, null, 4);
-//        retainTest(mySet, 2, 6);
-//        retainTest(mySet, 6, 7);
-//        retainTest(mySet, 4, null);
-//        retainTest(mySet, null, null);
-//        retainTest(mySet, 10, 2); // 10 not in set, throws exception
-        removeTest(mySet, null, 4);
+        retainTest(mySet, null, 4);
+        retainTest(mySet, 2, 6);
+        retainTest(mySet, 6, 7);
+        retainTest(mySet, 4, null);
+        retainTest(mySet, null , null);
+        //  retainTest(mySet, 10, 2); // 10 not in set, throws exception for set user to handle
+        System.out.println("==========================================");
+
+        removeTest(mySet, 3, 6);
+        removeTest(mySet, 2, 3);
+        removeTest(mySet, null, 6);
+        removeTest(mySet, 3, null);
+      //  removeTest(mySet, 6, 8); // 10 not in set, throws exception for set user to handle
     }
 
     public static void retainTest(LinkedRRSet<Integer> mySet, Integer start, Integer end) {
