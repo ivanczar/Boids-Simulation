@@ -45,9 +45,8 @@ public class LinkedDoubleEndedQueue<E> implements DoubleEndedQueue<E> {
             next = null;
             prev = null;
         }
-        
-        public String toString()
-        {
+
+        public String toString() {
             return (String) this.element;
         }
     }
@@ -64,7 +63,7 @@ public class LinkedDoubleEndedQueue<E> implements DoubleEndedQueue<E> {
             System.out.println("Oferrear when NOT empty");
             //adjust links
             newNode.prev = rearNode; // dont lose reference to rear
-            rearNode.next = newNode; //?
+            rearNode.next = newNode; 
             // point to rear
             rearNode = newNode;
 
@@ -86,7 +85,7 @@ public class LinkedDoubleEndedQueue<E> implements DoubleEndedQueue<E> {
             System.out.println("Oferfont when NOT empty");
             //adjust links
             newNode.next = frontNode; // dont lose reference to front!
-            frontNode.prev = newNode; //?
+            frontNode.prev = newNode; 
             // point to front
             frontNode = newNode;
         }
@@ -95,25 +94,42 @@ public class LinkedDoubleEndedQueue<E> implements DoubleEndedQueue<E> {
 
     @Override
     public E pollFront() {
-        Node<E> temp = frontNode.prev;
-        temp.prev = null;
-        
-        return (E) temp;
-        
-        
+        Node<E> temp = frontNode; // keeps copy of front to later return
+        if (isEmpty()) {
+            throw new ArrayIndexOutOfBoundsException("Queue is empty!");
+        } else {
+            frontNode = frontNode.next;
+
+            if (frontNode == null) {// if numElements==1
+                rearNode = null;
+            } else {
+                frontNode.prev = null;
+            }
+
+            numElements--;
+        }
+        return temp.element;
+
     }
 
     @Override
     public E pollRear() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Node<E> temp = rearNode;
+        if (isEmpty()) {
+            throw new ArrayIndexOutOfBoundsException("Queue is empty!");
+        } else {
+            rearNode = rearNode.prev;
+
+            if (rearNode == null)  {// if numElements==1
+                frontNode = null;
+            } else {
+                rearNode.next = null;
+            }
+            numElements--;
+        }
+        return temp.element;
     }
 
-    
-    
-    
-    
-    
-    
     @Override
     public E front() {
         if (!isEmpty()) {
@@ -208,22 +224,19 @@ public class LinkedDoubleEndedQueue<E> implements DoubleEndedQueue<E> {
     public static void main(String[] args) {
         LinkedDoubleEndedQueue queue = new LinkedDoubleEndedQueue();
 
-        System.out.println(queue.numElements);
-        queue.offerRear("test");
-        queue.offerRear("ing");
-        System.out.println(queue);
-        queue.offerFront("no");
+//        System.out.println(queue.numElements);
+//        queue.offerRear("test");
+//        queue.offerRear("ing");
+//        System.out.println(queue);
+//        queue.offerFront("no");
         queue.offerFront("fark");
-        System.out.println(queue);
-        queue.offerRear("please");
-        System.out.println(queue);
-        
-        
-        
-        System.out.println("Removing " + queue.rear());
+//        System.out.println(queue);
+//        queue.offerRear("please");
         System.out.println(queue);
 
-        
+        System.out.println("Removing " + queue.pollRear());
+
+        System.out.println(queue);
 
     }
 }
