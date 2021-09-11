@@ -15,9 +15,9 @@ import java.util.NoSuchElementException;
  */
 public class LinkedDoubleEndedQueue<E> implements DoubleEndedQueue<E> {
 
-    int numElements;
-    Node<E> frontNode;
-    Node<E> rearNode;
+    private int numElements;
+    protected Node<E> frontNode;
+    protected Node<E> rearNode;
 
     //constructor default
     public LinkedDoubleEndedQueue() {
@@ -58,12 +58,12 @@ public class LinkedDoubleEndedQueue<E> implements DoubleEndedQueue<E> {
         if (isEmpty()) {
             frontNode = newNode;
             rearNode = newNode;
-            System.out.println("Oferrear when empty");
+
         } else {
-            System.out.println("Oferrear when NOT empty");
+
             //adjust links
             newNode.prev = rearNode; // dont lose reference to rear
-            rearNode.next = newNode; 
+            rearNode.next = newNode;
             // point to rear
             rearNode = newNode;
 
@@ -77,15 +77,15 @@ public class LinkedDoubleEndedQueue<E> implements DoubleEndedQueue<E> {
         Node<E> newNode = new Node(element);
 
         if (isEmpty()) {
-            System.out.println("Oferfont when empty");
+
             frontNode = newNode;
             rearNode = newNode;
 
         } else {
-            System.out.println("Oferfont when NOT empty");
+
             //adjust links
             newNode.next = frontNode; // dont lose reference to front!
-            frontNode.prev = newNode; 
+            frontNode.prev = newNode;
             // point to front
             frontNode = newNode;
         }
@@ -120,7 +120,7 @@ public class LinkedDoubleEndedQueue<E> implements DoubleEndedQueue<E> {
         } else {
             rearNode = rearNode.prev;
 
-            if (rearNode == null)  {// if numElements==1
+            if (rearNode == null) {// if numElements==1
                 frontNode = null;
             } else {
                 rearNode.next = null;
@@ -224,19 +224,27 @@ public class LinkedDoubleEndedQueue<E> implements DoubleEndedQueue<E> {
     public static void main(String[] args) {
         LinkedDoubleEndedQueue queue = new LinkedDoubleEndedQueue();
 
-//        System.out.println(queue.numElements);
-//        queue.offerRear("test");
-//        queue.offerRear("ing");
-//        System.out.println(queue);
-//        queue.offerFront("no");
-        queue.offerFront("fark");
-//        System.out.println(queue);
-//        queue.offerRear("please");
+        queue.offerFront("Authoritah");
         System.out.println(queue);
-
-        System.out.println("Removing " + queue.pollRear());
-
+        queue.offerFront("My");
         System.out.println(queue);
+        queue.offerRear("Butters");
+        System.out.println(queue);
+        queue.offerFront("Respect");
+        System.out.println(queue);
+        queue.offerRear("Cartman");
+        System.out.println(queue);
+        System.out.println("Removing: \""+ queue.pollRear() + "\" from rear...");
+        System.out.println(queue);
+        System.out.println("Removing: \""+ queue.pollFront() + "\" from front...");
+        System.out.println(queue);
+        System.out.println("Front is now: \""  + queue.front() + "\" and rear is now: \"" + queue.rear() + "\"");
+        
+        System.out.println("Clearing queue...");
+        queue.clear();
+        System.out.println(queue);
+        System.out.println("Attempting to poll empty queue...");
+        queue.pollFront();
 
     }
 }
