@@ -93,27 +93,24 @@ public class PancakeStack extends ArrayList<Pancake> implements Iterable<Pancake
 
     public synchronized void pancakeSort(PancakeStack stackToSort) {
 
-        
-//        Thread t1 = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
+        Thread t1 = new Thread(new Runnable() {
+            @Override
+            public void run() {
 
-              
                 int largestIndex = 0;
-             
-                
+
                 for (int i = 0; i < stackToSort.size(); i++) {
                     largestIndex = stackToSort.findLargest(i);
                     stackToSort.flip(largestIndex);
-                    System.out.println("flipped from index " + largestIndex);
+                    //   System.out.println("flipped from index " + largestIndex);
                     stackToSort.flip(i);
-                    System.out.println("flipped from bottom");
+                    //  System.out.println("flipped from bottom");
                 }
 
-//            }
-//        });
-//        t1.start();
-                stackToSort.flip(0);
+            }
+        });
+        t1.start();
+        System.out.println(t1.isAlive());
     }
 
     @Override

@@ -110,7 +110,7 @@ public class PancakeGUI extends JPanel implements ActionListener, MouseListener 
             super.paintComponent(g);
 
             Pancake p;
-            final int height = 25;
+            final int height = getHeight()/stack.size();      
             int y = getHeight() - height;
 
             int width = 0;
@@ -123,11 +123,12 @@ public class PancakeGUI extends JPanel implements ActionListener, MouseListener 
                     p = stack.getPancake(i);
                     
 
-                    width = getWidth() / p.getSize();
+                    width = (p.getSize() * getWidth()) / stack.size();
+//                    
                     p.draw(g, x - width / 2, y, width, height);
 
                     g.setColor(Color.BLACK);
-                    g.drawString(String.valueOf(p.getSize()), (x -width / 2), (y));
+                    g.drawString(String.valueOf(p.getSize()), (x -width / 2), (height+y));
 
                     width -= width;
                     y -= height;
