@@ -19,21 +19,11 @@ public class Pancake implements Comparable<Pancake> {
     private int size;
     private boolean selected;
 
-    public Pancake(int size) { // int size, Color color ARGUMENTS
+    public Pancake(int size, Color color) {
         Random rand = new Random();
-        
-        
-        
-        this.size = size;//rand.nextInt(20 -1);
-        
-        for (int i = 0; i < 3; i++) {
-            int rValue = rand.nextInt(255 - 2);
-            int gValue = rand.nextInt(255 - 2);
-            int bValue = rand.nextInt(255 - 2);
 
-            this.color = new Color(rValue, gValue, bValue);
-
-        }
+        this.size = size;
+        this.color = color;
 
     }
 
@@ -59,13 +49,19 @@ public class Pancake implements Comparable<Pancake> {
         this.selected = selected;
     }
 
-    public void draw(Graphics g) {
+    public void draw(Graphics g,  int x, int y, int width,int height) {
 
+        //width = width/size;
         //if selected drwa a black rectangle around to simulate select
+        g.setColor(color);
+        g.fillRoundRect(x, y, width , height, 10, 10);
+        
+        
+        
+        
     }
-    
-    public String toString()
-    {
+
+    public String toString() {
         return this.size + "";
     }
 

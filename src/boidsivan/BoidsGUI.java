@@ -21,7 +21,7 @@ import javax.swing.event.ChangeListener;
  *
  * @author ivanc
  */
-public class BoidsGUI extends JPanel implements ActionListener { // create frame in main and put ballGUI(extends jpanel) into it
+public class BoidsGUI extends JPanel implements ActionListener { // 
 
     private BoidFlock flock;
 

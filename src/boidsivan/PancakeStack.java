@@ -5,11 +5,14 @@
  */
 package boidsivan;
 
+import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.Queue;
+import java.util.Random;
 
 /**
  *
@@ -17,10 +20,27 @@ import java.util.Queue;
  */
 //ArrayList generic now specified to hold Pancake objects 
 // Extending ArrayList to used its methods to create methods for a pancake stack
-public class PancakeStack extends ArrayList<Pancake> {
+public class PancakeStack extends ArrayList<Pancake> implements Iterable<Pancake> {
 
     public PancakeStack() {
         super();
+
+        Random rand = new Random();
+        ArrayList<Integer> sizes = new ArrayList<>();
+
+        for (int j = 1; j <= 20; j++) { // populate list of sizes from 1-20
+            sizes.add(j);
+        }
+        Collections.shuffle(sizes); //shuffle sizes arraylist
+        for (int i = 0; i < sizes.size(); i++) { //populate pancakestack
+
+            int size = sizes.get(i);
+            int rValue = rand.nextInt(255 - 2);
+            int gValue = rand.nextInt(255 - 2);
+            int bValue = rand.nextInt(255 - 2);
+            Color color = new Color(rValue, gValue, bValue);
+            this.push(new Pancake(size, color));
+        }
     }
 
     public Pancake getPancake(int index) {
@@ -59,7 +79,7 @@ public class PancakeStack extends ArrayList<Pancake> {
         Queue<Pancake> temp = new LinkedList();
 
         for (int i = size() - 1; i >= index; i--) {
-            System.out.println("removed");
+
             temp.add(this.pop());
 
         }
@@ -69,54 +89,47 @@ public class PancakeStack extends ArrayList<Pancake> {
 
     }
 
+    @Override
     public Iterator<Pancake> iterator() {
-        return new PancakeIterator<Pancake>(0);
+        return new PancakeIterator(this);
     }
-    
-    private class PancakeIterator<Pancake> implements Iterator<Pancake> {
 
-        private int currentIndex; // next node to use for the iterator
+    private class PancakeIterator implements Iterator<Pancake> {
 
-        // constructor which accepts a reference to first node in list
-        // and prepares an iterator which will iterate through the
-        // entire linked list
-        public PancakeIterator(int bottom) {
+        PancakeStack stack;
+        int currentIndex;
 
-            currentIndex = bottom;
+        public PancakeIterator(PancakeStack stack) {
+            this.stack = stack;
+            currentIndex = 0;
         }
 
         // returns whether there is still another element
+        @Override
         public boolean hasNext() {
-            return getPancake(currentIndex++) != null;
+
+            return currentIndex < stack.size();
         }
 
         // returns the next element or throws a NoSuchElementException
         // it there are no further elements
+        @Override
         public Pancake next() throws NoSuchElementException {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
 
-            return (Pancake) getPancake(currentIndex++);
+            Pancake nextP = (Pancake) getPancake(currentIndex);
+            currentIndex++;
+            return nextP;
         }
 
         // remove method not supported by this iterator
+        @Override
         public void remove() throws UnsupportedOperationException {
             throw new UnsupportedOperationException();
         }
-    }
-
-    public static void main(String[] args) {
-
-        PancakeStack stack = new PancakeStack();
-        for (int i = 1; i < 20; i++) {
-            stack.push(new Pancake(i));
-        }
-
-        System.out.println(stack);
-
-        stack.flip(10);
-        System.out.println(stack);
 
     }
+
 }
