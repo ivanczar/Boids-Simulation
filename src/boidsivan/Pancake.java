@@ -19,12 +19,12 @@ public class Pancake implements Comparable<Pancake> {
     private int size;
     private boolean selected;
 
-    public Pancake(int size, Color color) {
+    public Pancake(int size) { // int size, Color color ARGUMENTS
         Random rand = new Random();
         
         
         
-        this.size = rand.nextInt(20 -1);
+        this.size = size;//rand.nextInt(20 -1);
         
         for (int i = 0; i < 3; i++) {
             int rValue = rand.nextInt(255 - 2);
@@ -62,6 +62,11 @@ public class Pancake implements Comparable<Pancake> {
     public void draw(Graphics g) {
 
         //if selected drwa a black rectangle around to simulate select
+    }
+    
+    public String toString()
+    {
+        return this.size + "";
     }
 
 }
