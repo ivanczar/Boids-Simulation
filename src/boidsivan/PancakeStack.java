@@ -28,9 +28,10 @@ public class PancakeStack extends ArrayList<Pancake> implements Iterable<Pancake
         Random rand = new Random();
         ArrayList<Integer> sizes = new ArrayList<>();
 
-        for (int j = 1; j <= 20; j++) { // populate list of sizes from 1-20
+        for (int j = 1; j < 21; j++) { // populate list of sizes from 1-20
             sizes.add(j);
         }
+
         Collections.shuffle(sizes); //shuffle sizes arraylist
         for (int i = 0; i < sizes.size(); i++) { //populate pancakestack
 
@@ -41,6 +42,7 @@ public class PancakeStack extends ArrayList<Pancake> implements Iterable<Pancake
             Color color = new Color(rValue, gValue, bValue);
             this.push(new Pancake(size, color));
         }
+
     }
 
     public Pancake getPancake(int index) {
@@ -89,6 +91,31 @@ public class PancakeStack extends ArrayList<Pancake> implements Iterable<Pancake
 
     }
 
+    public synchronized void pancakeSort(PancakeStack stackToSort) {
+
+        
+//        Thread t1 = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+
+              
+                int largestIndex = 0;
+             
+                
+                for (int i = 0; i < stackToSort.size(); i++) {
+                    largestIndex = stackToSort.findLargest(i);
+                    stackToSort.flip(largestIndex);
+                    System.out.println("flipped from index " + largestIndex);
+                    stackToSort.flip(i);
+                    System.out.println("flipped from bottom");
+                }
+
+//            }
+//        });
+//        t1.start();
+                stackToSort.flip(0);
+    }
+
     @Override
     public Iterator<Pancake> iterator() {
         return new PancakeIterator(this);
@@ -130,6 +157,14 @@ public class PancakeStack extends ArrayList<Pancake> implements Iterable<Pancake
             throw new UnsupportedOperationException();
         }
 
+    }
+    
+    public static void main(String[] args) {
+        PancakeStack stack = new PancakeStack();
+        
+        System.out.println(stack);
+        stack.pancakeSort(stack);
+        System.out.println(stack);
     }
 
 }

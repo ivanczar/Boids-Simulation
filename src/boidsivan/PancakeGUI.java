@@ -8,11 +8,15 @@ package boidsivan;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -22,7 +26,7 @@ import javax.swing.Timer;
  *
  * @author Ivan
  */
-public class PancakeGUI extends JPanel implements ActionListener {
+public class PancakeGUI extends JPanel implements ActionListener, MouseListener {
 
     private PancakeStack stack;
     private JButton resetButton;
@@ -43,9 +47,10 @@ public class PancakeGUI extends JPanel implements ActionListener {
         buttons.add(resolveButton);
         add(buttons, BorderLayout.SOUTH);
         add(drawPanel, BorderLayout.CENTER);
-        
+
         resetButton.addActionListener(this);
         resolveButton.addActionListener(this);
+        addMouseListener(this);
 
         timer = new Timer(20, this);
         timer.start();
@@ -54,13 +59,43 @@ public class PancakeGUI extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
-        if (source == resetButton)
-        {
+        if (source == resetButton) {
             System.out.println("reset");
-             stack = new PancakeStack();
-            
+            stack = new PancakeStack();
+
+        }
+        if (source == resolveButton)
+        {
+            System.out.println("Resolving");
+            stack.pancakeSort(stack);
         }
         drawPanel.repaint();
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        System.out.println(e.getX() + " " + e.getY()); //testing
+        // add extra fields to pancake to store and set position and width and the use p.contains(e.getx,e.gety)? 
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        
     }
 
     private class DrawPanel extends JPanel {
@@ -73,28 +108,29 @@ public class PancakeGUI extends JPanel implements ActionListener {
         @Override
         public void paintComponent(Graphics g) {
             super.paintComponent(g);
-            
+
             Pancake p;
             final int height = 25;
-            int y = getHeight();
-            
-            int width =0;
-            int x = getWidth() /2;
-            
+            int y = getHeight() - height;
+
+            int width = 0;
+            int x = getWidth() / 2;
+
             if (stack.size() != 0) {
 
-           
-                for (int i =0; i <stack.size();i++)
-                {
+                for (int i = 0; i < stack.size(); i++) {
+
                     p = stack.getPancake(i);
-                    g.setColor(Color.black);
                     
-                    width = getWidth()/p.getSize();
-                    p.draw(g, x - width/2, y, width, height);
+
+                    width = getWidth() / p.getSize();
+                    p.draw(g, x - width / 2, y, width, height);
+
                     g.setColor(Color.BLACK);
-                    g.drawString(String.valueOf(p.getSize()), (width), (height+y));
-                    width-=width;
-                    y-=height;
+                    g.drawString(String.valueOf(p.getSize()), (x -width / 2), (y));
+
+                    width -= width;
+                    y -= height;
                 }
             }
 
