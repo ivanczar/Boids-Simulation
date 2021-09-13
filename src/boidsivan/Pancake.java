@@ -5,8 +5,10 @@
  */
 package boidsivan;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.Random;
 
 /**
@@ -55,7 +57,13 @@ public class Pancake implements Comparable<Pancake> {
         //if selected drwa a black rectangle around to simulate select
         g.setColor(color);
         g.fillRoundRect(x, y, width , height, 10, 10);
-        
+        if (this.selected)
+        {
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setColor(Color.BLACK);
+            g2.setStroke(new BasicStroke(4));
+            g2.drawRoundRect(x, y, width, height, 10, 10);
+        }
         
         
         

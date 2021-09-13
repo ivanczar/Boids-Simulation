@@ -66,8 +66,8 @@ public class PancakeGUI extends JPanel implements ActionListener, MouseListener 
         }
         if (source == resolveButton)
         {
-            System.out.println("Resolving");
-            stack.pancakeSort(stack);
+//            System.out.println("Resolving");
+            stack.pancakeSort();
         }
         drawPanel.repaint();
     }
@@ -121,6 +121,7 @@ public class PancakeGUI extends JPanel implements ActionListener, MouseListener 
                 for (int i = 0; i < stack.size(); i++) {
 
                     p = stack.getPancake(i);
+                    
                     
 
                     width = (p.getSize() * getWidth()) / stack.size();

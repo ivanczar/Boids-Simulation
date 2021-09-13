@@ -68,6 +68,7 @@ public class PancakeStack extends ArrayList<Pancake> implements Iterable<Pancake
 
         for (int i = offset; i < this.size(); i++) {
             if (this.getPancake(i).getSize() > largestSize) {
+//                this.getPancake(i).highlight(true);
                 largestSize = this.getPancake(i).getSize();
                 largestSizeIndex = i;
             }
@@ -79,38 +80,68 @@ public class PancakeStack extends ArrayList<Pancake> implements Iterable<Pancake
     public void flip(int index) {
 
         Queue<Pancake> temp = new LinkedList();
-
+        this.getPancake(index).highlight(true);
         for (int i = size() - 1; i >= index; i--) {
 
             temp.add(this.pop());
 
         }
         for (Pancake p : temp) {
+
             this.push(p);
         }
 
     }
 
-    public synchronized void pancakeSort(PancakeStack stackToSort) {
+    public boolean inOrder() {
+        Iterator<Pancake> it = this.iterator();
+        Pancake prevPan = this.getPancake(0);
+
+        while (it.hasNext()) {
+            Pancake next = it.next();
+            if (prevPan.compareTo(next) == -1) {
+                return false;
+            }
+            prevPan = it.next();// ??
+        }
+        return true;
+    }
+
+    public synchronized void pancakeSort() {
 
         Thread t1 = new Thread(new Runnable() {
             @Override
             public void run() {
-
+if (!inOrder()){
                 int largestIndex = 0;
+                System.out.println("Sorting...");
+               
+                
+                    for (int i = 0; i < size(); i++) {
+                         
+                        try {
+                        largestIndex = findLargest(i);
+                        flip(largestIndex);
+                        //   System.out.println("flipped from index " + largestIndex);
+                        flip(i);
 
-                for (int i = 0; i < stackToSort.size(); i++) {
-                    largestIndex = stackToSort.findLargest(i);
-                    stackToSort.flip(largestIndex);
-                    //   System.out.println("flipped from index " + largestIndex);
-                    stackToSort.flip(i);
-                    //  System.out.println("flipped from bottom");
+                        Thread.sleep(1000); // sleep thread for 1s between moves to animated movement
+                        //  System.out.println("flipped from bottom");
+                        } catch (InterruptedException e) {
+                            System.out.println("Interrupted");
+                        }
+                    
+                    }
+            
+                System.out.println("Finished Sorting");
                 }
-
+                else{
+    System.out.println("ALREADY IN ORDER!");
+}
             }
         });
         t1.start();
-        System.out.println(t1.isAlive());
+
     }
 
     @Override
@@ -155,13 +186,15 @@ public class PancakeStack extends ArrayList<Pancake> implements Iterable<Pancake
         }
 
     }
-    
-    public static void main(String[] args) {
-        PancakeStack stack = new PancakeStack();
-        
-        System.out.println(stack);
-        stack.pancakeSort(stack);
-        System.out.println(stack);
-    }
+
+//    public static void main(String[] args) {
+        //test sort and in Order (wont sort here in sort method is threaded but will in GUI)
+//        PancakeStack stack = new PancakeStack();
+//        System.out.println(stack);
+//        System.out.println(stack.inOrder());
+//        stack.pancakeSort();
+//        System.out.println(stack);
+//        System.out.println(stack.inOrder());
+//    }
 
 }
