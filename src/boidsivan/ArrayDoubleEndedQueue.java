@@ -17,12 +17,14 @@ public class ArrayDoubleEndedQueue<E> implements DoubleEndedQueue<E> {
 
     private final int INITIAL_CAPACITY = 5;
     protected int numElements = 0;
-    protected int front = 0; // indicates start of queue
-    protected int rear = 0; // indicates next available position for adding element
+    protected int front; // indicates start of queue
+    protected int rear; // indicates next available position for adding element
     protected E[] elements;
 
     public ArrayDoubleEndedQueue() {
         numElements = 0;
+        front = 0;
+        rear = 0;
         elements = (E[]) (new Object[INITIAL_CAPACITY]); // unchecked
     }
 
@@ -48,15 +50,13 @@ public class ArrayDoubleEndedQueue<E> implements DoubleEndedQueue<E> {
             return;
         }
         if (rear == numElements - 1) {
-            rear = 0;
-        } else {
-
-            elements[rear] = element;
-            numElements++;
-            rear++;
-
+            rear = 0; //wrap around
         }
-        
+
+        elements[rear] = element;
+        numElements++;
+        rear++;
+
     }
 
     @Override
@@ -66,14 +66,14 @@ public class ArrayDoubleEndedQueue<E> implements DoubleEndedQueue<E> {
             expandCapacity();
         }
         if (front == 0) {
-            
-            front = numElements - 1;
-        } else {
-            front--;
+
+            front = numElements - 1;//wrap around
 
         }
         elements[front] = element;
         numElements++;
+        front--;
+        
     }
 
     @Override
@@ -88,22 +88,20 @@ public class ArrayDoubleEndedQueue<E> implements DoubleEndedQueue<E> {
 
     @Override
     public E front() {
-        if (!isEmpty())
-        {
-        return elements[front];
-        }
-        else
+        if (!isEmpty()) {
+            return elements[front];
+        } else {
             throw new ArrayIndexOutOfBoundsException("Queue is empty!");
+        }
     }
 
     @Override
     public E rear() {
-        if (!isEmpty())
-        {
-        return elements[rear];
-        }
-        else 
+        if (!isEmpty()) {
+            return elements[rear];
+        } else {
             throw new ArrayIndexOutOfBoundsException("Queue is empty!");
+        }
     }
 
     @Override
@@ -151,39 +149,59 @@ public class ArrayDoubleEndedQueue<E> implements DoubleEndedQueue<E> {
 
     }
 
+//    public String toString() {
+//        String s = "[";
+//        for (int i = front; i < rear; i++) {
+//            if (front == numElements -1)
+//            {
+//                front=0;
+//            }
+//            s += elements[i];
+//            if (i < elements.length - 1) {
+//                s += " ,";
+//            }
+//        }
+//        return s + "]";
+//
+//    }
+    
+       public String toString() {
+        String output = "front<=[";
 
-    public String toString() {
-        String s = "[";
-        for (int i = 0; i < elements.length; i++) {
-            s += elements[i];
-            if (i < elements.length - 1) {
-                s += " ,";
+        Iterator<E> it = this.iterator();
+
+        while (it.hasNext()) {
+            output += it.next();
+            if (it.hasNext()) {
+                output += ",";
             }
         }
-        return s + "]";
-
+        output += "]==rear";
+        return output;
     }
 
     @Override
     public Iterator<E> iterator() {
-        return new ArrayIterator<E>(front);
+        return new ArrayIterator<E>(this);
     }
 
     private class ArrayIterator<E> implements Iterator<E> {
 
-        private int currentIndex; // next node to use for the iterator
+        private ArrayDoubleEndedQueue arr;
+        private int currentIndex = front; // next node to use for the iterator
 
         // constructor which accepts a reference to first node in list
         // and prepares an iterator which will iterate through the
         // entire linked list
-        public ArrayIterator(int front) {
-
-            currentIndex = front;
-        }
+       public ArrayIterator(ArrayDoubleEndedQueue arr)
+       {
+           this.arr = arr;
+       }
 
         // returns whether there is still another element
         public boolean hasNext() {
-            return elements[currentIndex++] != null;
+            return elements[currentIndex] != null;
+
         }
 
         // returns the next element or throws a NoSuchElementException
@@ -192,8 +210,8 @@ public class ArrayDoubleEndedQueue<E> implements DoubleEndedQueue<E> {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
-
-            return (E) elements[currentIndex++];
+            currentIndex++;
+            return (E) elements[currentIndex];
         }
 
         // remove method not supported by this iterator
@@ -205,14 +223,18 @@ public class ArrayDoubleEndedQueue<E> implements DoubleEndedQueue<E> {
     public static void main(String[] args) {
         ArrayDoubleEndedQueue queue = new ArrayDoubleEndedQueue();
 
-        queue.offerRear("hi");
+        System.out.println("Enquing hi to rear");
+        System.out.println("Front: " + queue.front + " Rear: " + queue.rear);
+        queue.offerRear("hi"); 
         System.out.println(queue);
+        
+        System.out.println("Enqueuing chu to rear");
+        System.out.println("Front: " + queue.front + " Rear: " + queue.rear);
         queue.offerRear("chu");
         System.out.println(queue);
-        queue.offerRear("bi");
-        System.out.println(queue);
-        queue.offerRear("ste");
-        System.out.println(queue);
+        
+        System.out.println("enquening chi to front");
+        System.out.println("Front: " + queue.front + " Rear: " + queue.rear);
         queue.offerFront("chi");
         System.out.println(queue);
 

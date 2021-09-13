@@ -26,7 +26,7 @@ import javax.swing.Timer;
  *
  * @author Ivan
  */
-public class PancakeGUI extends JPanel implements ActionListener, MouseListener {
+public class PancakeGUI extends JPanel implements ActionListener {
 
     private PancakeStack stack;
     private JButton resetButton;
@@ -42,6 +42,8 @@ public class PancakeGUI extends JPanel implements ActionListener, MouseListener 
         resolveButton = new JButton("Resolve");
         drawPanel = new DrawPanel();
         buttons = new JPanel();
+        
+        
 
         buttons.add(resetButton);
         buttons.add(resolveButton);
@@ -50,7 +52,8 @@ public class PancakeGUI extends JPanel implements ActionListener, MouseListener 
 
         resetButton.addActionListener(this);
         resolveButton.addActionListener(this);
-        addMouseListener(this);
+        
+                
 
         timer = new Timer(20, this);
         timer.start();
@@ -72,37 +75,15 @@ public class PancakeGUI extends JPanel implements ActionListener, MouseListener 
         drawPanel.repaint();
     }
 
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        System.out.println(e.getX() + " " + e.getY()); //testing
-        // add extra fields to pancake to store and set position and width and the use p.contains(e.getx,e.gety)? 
-    }
+   
 
-    @Override
-    public void mousePressed(MouseEvent e) {
-        
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-        
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-        
-    }
-
-    private class DrawPanel extends JPanel {
+    private class DrawPanel extends JPanel implements MouseListener {
 
         public DrawPanel() {
-            setPreferredSize(new Dimension(700, 500));
+            setPreferredSize(new Dimension(600, 400));
             setBackground(Color.WHITE);
+            addMouseListener(this);
+            
         }
 
         @Override
@@ -110,11 +91,11 @@ public class PancakeGUI extends JPanel implements ActionListener, MouseListener 
             super.paintComponent(g);
 
             Pancake p;
-            final int height = getHeight()/stack.size();      
+            int height =getHeight()/stack.size();      
             int y = getHeight() - height;
 
             int width = 0;
-            int x = getWidth() / 2;
+            int x = getWidth() / 2; //centre of panel
 
             if (stack.size() != 0) {
 
@@ -137,10 +118,43 @@ public class PancakeGUI extends JPanel implements ActionListener, MouseListener 
             }
 
         }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            int height = getHeight()/stack.size();
+            
+         int ycord = getHeight()-e.getY(); // "inverts" origin - 0 is now bottom of frame
+            int index = ((ycord/stack.size() * (height))/height); // calcs index based on y click coord
+            
+//            System.out.println("Index" + index);
+            stack.getPancake(index).highlight(true); 
+            stack.flip(index);
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+            
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+            
+        }
     }
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("PANCAKEGUI");
+        frame.setResizable(false);
         // kill all threads when frame closes
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().add(new PancakeGUI());
@@ -152,6 +166,7 @@ public class PancakeGUI extends JPanel implements ActionListener, MouseListener 
         Dimension frameDimension = frame.getSize();
         frame.setLocation((screenDimension.width - frameDimension.width) / 2,
                 (screenDimension.height - frameDimension.height) / 2);
+
         frame.setVisible(true);
 
     }

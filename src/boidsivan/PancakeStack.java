@@ -42,6 +42,7 @@ public class PancakeStack extends ArrayList<Pancake> implements Iterable<Pancake
             Color color = new Color(rValue, gValue, bValue);
             this.push(new Pancake(size, color));
         }
+        
 
     }
 
@@ -80,7 +81,7 @@ public class PancakeStack extends ArrayList<Pancake> implements Iterable<Pancake
     public void flip(int index) {
 
         Queue<Pancake> temp = new LinkedList();
-        this.getPancake(index).highlight(true);
+        
         for (int i = size() - 1; i >= index; i--) {
 
             temp.add(this.pop());
@@ -93,6 +94,10 @@ public class PancakeStack extends ArrayList<Pancake> implements Iterable<Pancake
 
     }
 
+    /**
+     * Compares size of previous pancake to the next
+     * @return 
+     */
     public boolean inOrder() {
         Iterator<Pancake> it = this.iterator();
         Pancake prevPan = this.getPancake(0);
@@ -102,7 +107,7 @@ public class PancakeStack extends ArrayList<Pancake> implements Iterable<Pancake
             if (prevPan.compareTo(next) == -1) {
                 return false;
             }
-            prevPan = it.next();// ??
+            prevPan = it.next();
         }
         return true;
     }
@@ -112,32 +117,33 @@ public class PancakeStack extends ArrayList<Pancake> implements Iterable<Pancake
         Thread t1 = new Thread(new Runnable() {
             @Override
             public void run() {
-if (!inOrder()){
-                int largestIndex = 0;
-                System.out.println("Sorting...");
-               
-                
-                    for (int i = 0; i < size(); i++) {
-                         
-                        try {
-                        largestIndex = findLargest(i);
-                        flip(largestIndex);
-                        //   System.out.println("flipped from index " + largestIndex);
-                        flip(i);
+                if (!inOrder()) { // sort only if not already in order
+                    int largestIndex = 0;
+                    int currentIndex = 0;
+                    
+                    System.out.println("Sorting...");
 
-                        Thread.sleep(1000); // sleep thread for 1s between moves to animated movement
-                        //  System.out.println("flipped from bottom");
+                  //  while (!inOrder()) { FOR SOME REASON SORTS 3/4 AND THEN RETURNS IN ORDER?
+                    for (int i =0; i < size() ; i++){   
+                        try {
+                            getPancake(largestIndex).highlight(true);
+                            largestIndex = findLargest(currentIndex);
+                            flip(largestIndex);
+                            //   System.out.println("flipped from index " + largestIndex);
+                            flip(currentIndex);
+                            currentIndex++;
+                            Thread.sleep(1000); // sleep thread for 1s between moves to animated movement
+                            //  System.out.println("flipped from bottom");
                         } catch (InterruptedException e) {
                             System.out.println("Interrupted");
                         }
-                    
+
                     }
-            
-                System.out.println("Finished Sorting");
+
+                    System.out.println("Finished Sorting");
+                } else {
+                    System.out.println("ALREADY IN ORDER!");
                 }
-                else{
-    System.out.println("ALREADY IN ORDER!");
-}
             }
         });
         t1.start();
@@ -188,7 +194,7 @@ if (!inOrder()){
     }
 
 //    public static void main(String[] args) {
-        //test sort and in Order (wont sort here in sort method is threaded but will in GUI)
+    //test sort and in Order (wont sort here in sort method is threaded but will in GUI)
 //        PancakeStack stack = new PancakeStack();
 //        System.out.println(stack);
 //        System.out.println(stack.inOrder());
@@ -196,5 +202,4 @@ if (!inOrder()){
 //        System.out.println(stack);
 //        System.out.println(stack.inOrder());
 //    }
-
 }
